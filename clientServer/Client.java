@@ -1,28 +1,30 @@
+package clientServer;
 import java.net.*;
 import java.io.*;
 
 public class Client {
 
+   // create sender and reciever instances
+    Sender send;
+    Receiver rec;
 
-    public static void main(String[] args) throws IOException {
-
-        try{
-        Socket socket = new Socket("localhost", 5000 );
-
-        DataOutputStream dOut = new DataOutputStream(socket.getOutputStream());
-
-        dOut.writeUTF("Hello Server");
-        dOut.flush();
-        dOut.close();
-        socket.close();
-        }
-        catch(Exception e) {System.out.println(e);}
-
+    public Client() 
+    	{
+    	   // create a send and reciever for each client 
+        send = new Sender();
+        send.start();
         
-        // InputStream input = socket.getInputStream();
+        while( ClientHandler.serverNode == null );
+        rec = new Receiver();
+    	  rec.start();
+        }
 
-        // BufferedReader reader = new BufferedReader(new InputStreamReader(input) );
+    public static void main(String[] args) throws IOException
+       {
+        // Start a new client
+    	 new Client();
+    	
 
-    }
+       }
     
 }

@@ -1,14 +1,16 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
+package clientServer;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 
-public class ChatServer 
+public class ChatServer
    {
-	ArrayList clientOutputStreams;
+	public static ArrayList<Node> clientOutputStreams;
 
     public ChatServer() {
 	// list for clients join 
-    clientOutputStreams = new ArrayList<>();
+    clientOutputStreams = new ArrayList<Node>();
 
 	try 
 	   {
@@ -19,26 +21,15 @@ public class ChatServer
 		while(true) 
 		   {
 			// create client socket
+			System.out.println("Server is running");
 			Socket clientSocket = serverSock.accept();
 			
-			// add client to list by default (later change to JOIN )
-			PrintWriter writer = new PrintWriter( clientSocket.getOutputStream());
+			// create a thread for each cient
+			Thread thread = new Thread(new ClientHandler(clientSocket));
+			// start the thread
+			thread.start();
 			
-            // test for join 
-		    clientOutputStreams.add(writer);
-
-            BufferedReader input = new BufferedReader( new InputStreamReader(clientSocket.getInputStream()));
-
-            String message = input.readLine();
-            System.out.println("Recieve from client: " + message);
-
-			
-			// create thread to handle multiple clients
-			// Thread clientThread = new Thread(new ClientHandler( clientSocket ));
-			
-			// start the thread process
-			// clientThread.start();
-			// verify connection had been established
+		    // print to console if connection is made
 			System.out.println("Got a connection");
 		   } 
 		
@@ -49,9 +40,63 @@ public class ChatServer
 	
 
    }
+    
+    /*
+    // parameters( message, clients node )
+   public static void sendToAll( Message message, Node clientNode )
+      {
+      ObjectInputStream in;
+      ObjectOutputStream out;
+      Socket clientSocket;
+   
+      // loop through list
+      
+      //for( int i = 0; i < clientOutputStreams.size(); i++)
+       //  {
+         // create object out put stream
+         // creste object input stream
+         // create socket connection for each node
+         try
+            {
+            clientSocket = new Socket(clientNode.address, clientNode.port);
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            
+            out.writeObject(message.getContent());
+            
+           // out.writeObject(message);
+            System.out.println("message sent to client: " + message.getContent());
+            
+            clientSocket.close();
+            } catch (IOException e)
+            {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            }
+         
+      
+         // write to client
+         // print out message written to client 
+      // end looop
+       //  }
+         // loop through the list
+            // create a socket for 
+         // 
+      }
+*/
+    
+ // add item to list of nodes 
+   public static void addItem( Node clientNode )
+      {
+      clientOutputStreams.add(clientNode);
+      
+      }
+   
    public static void main(String[] args)
       {
+      // create new server
         new ChatServer();
+        
       }
     }
 
